@@ -1,6 +1,6 @@
 ---
 title: "Modeling"
-format: pdf
+format: html
 editor: visual
 ---
 
