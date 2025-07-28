@@ -1,5 +1,20 @@
 ---
 title: "EDA"
-format: pdf
+format: html
 editor: visual
 ---
+
+## Introduction
+
+The Diabetes Health Indicators Data set has 253,680 survey responses to the CDC's BRFSS2015 (Behavioral Risk Factor Surveillance System 2015). The primary response variable is "Diabetes_binary" which is in two classes: 0 for no diabetes and 1 for prediabetes/diabetes. Overall this data set has 21 variables.
+
+For the purpose of this EDA and modeling, we will limit the analysis to explore 3 predictor variables in addition to our response variable of "Diabetes_binary". These include:
+
+- **HighChol**: Adults who have been told they have high cholesterol. A class variable with 0 for no high cholesterol and 1 for high cholesterol.
+- **BMI**: Body Mass Index ranging from 12 to 98 with an average of 28.4.
+- **Age**: A 13-level age category where 1 = 18-24 all the way up to 13 = 80 and older and in between each level is in five year increments. The average age group is 55-59.
+
+The first two were selected because of prior known relationships to them and diabetes. Age was selected because it would be interesting to know if it truly does have a relationship with the presence of diabetes.
+
+Overall, the purpose of this EDA is to explore the chosen variables by summarizing them, looking at relationships, and evaluate different models to see their effectiveness in predicting prediabetes/diabetes or no diabetes. 
+
