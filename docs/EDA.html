@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -101,7 +135,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>The Diabetes Health Indicators Data set has 253,680 survey responses to the CDC’s BRFSS2015 (Behavioral Risk Factor Surveillance System 2015). The primary response variable is “Diabetes_binary” which is in two classes: 0 for no diabetes and 1 for prediabetes/diabetes. Overall this data set has 21 variables.</p>
+<p>The Diabetes Health Indicators Data set has 253,680 survey responses to the CDC’s BRFSS2015 (Behavioral Risk Factor Surveillance System 2015). The primary response variable is “Diabetes_binary” which is in two classes: 0 for no diabetes and 1 for prediabetes/diabetes. Additionally, this data set has 21 variables.</p>
 <p>For the purpose of this EDA and modeling, we will limit the analysis to explore 3 predictor variables in addition to our response variable of “Diabetes_binary”. These include:</p>
 <ul>
 <li><strong>HighChol</strong>: Adults who have been told they have high cholesterol. A class variable with 0 for no high cholesterol and 1 for high cholesterol.</li>
@@ -113,6 +147,75 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>For the following section we are going to read in our data, convert the variables to factors if needed, and do any necessary data checks.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="do">## read in the data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>diabetes_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"diabetes_binary_health_indicators_BRFSS2015.csv"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="do">## data type</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(diabetes_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   253680 obs. of  22 variables:
+ $ Diabetes_binary     : num  0 0 0 0 0 0 0 0 1 0 ...
+ $ HighBP              : num  1 0 1 1 1 1 1 1 1 0 ...
+ $ HighChol            : num  1 0 1 0 1 1 0 1 1 0 ...
+ $ CholCheck           : num  1 0 1 1 1 1 1 1 1 1 ...
+ $ BMI                 : num  40 25 28 27 24 25 30 25 30 24 ...
+ $ Smoker              : num  1 1 0 0 0 1 1 1 1 0 ...
+ $ Stroke              : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ HeartDiseaseorAttack: num  0 0 0 0 0 0 0 0 1 0 ...
+ $ PhysActivity        : num  0 1 0 1 1 1 0 1 0 0 ...
+ $ Fruits              : num  0 0 1 1 1 1 0 0 1 0 ...
+ $ Veggies             : num  1 0 0 1 1 1 0 1 1 1 ...
+ $ HvyAlcoholConsump   : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ AnyHealthcare       : num  1 0 1 1 1 1 1 1 1 1 ...
+ $ NoDocbcCost         : num  0 1 1 0 0 0 0 0 0 0 ...
+ $ GenHlth             : num  5 3 5 2 2 2 3 3 5 2 ...
+ $ MentHlth            : num  18 0 30 0 3 0 0 0 30 0 ...
+ $ PhysHlth            : num  15 0 30 0 0 2 14 0 30 0 ...
+ $ DiffWalk            : num  1 0 1 0 0 0 0 1 1 0 ...
+ $ Sex                 : num  0 0 0 0 0 1 0 0 0 1 ...
+ $ Age                 : num  9 7 9 11 11 10 9 11 9 8 ...
+ $ Education           : num  4 6 4 3 5 6 6 4 5 4 ...
+ $ Income              : num  3 1 8 6 4 8 7 4 1 3 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## check for missing values</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(<span class="fu">is.na</span>(diabetes_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p>From this output we can see that we have a data frame with 253,680 observations of 22 variables. The output of “FALSE” tells us that there are no missing variables. We will now select only our variables of interest and convert them to factors when needed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>diabetes_eda <span class="ot">&lt;-</span> diabetes_data <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Diabetes =</span> <span class="fu">factor</span>(Diabetes_binary, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"0"</span>,<span class="st">"1"</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"No"</span>,<span class="st">"Yes"</span>)),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">HighChol =</span> <span class="fu">factor</span>(HighChol,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"0"</span>,<span class="st">"1"</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"No High Cholesterol"</span>,<span class="st">"High Cholesterol"</span>)),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Age =</span> <span class="fu">factor</span>(Age,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"1"</span>,<span class="st">"2"</span>,<span class="st">"3"</span>,<span class="st">"4"</span>,<span class="st">"5"</span>,<span class="st">"6"</span>,<span class="st">"7"</span>,<span class="st">"8"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                            <span class="st">"9"</span>,<span class="st">"10"</span>,<span class="st">"11"</span>,<span class="st">"12"</span>,<span class="st">"13"</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"18-24"</span>,<span class="st">"25-29"</span>,<span class="st">"30-34"</span>,<span class="st">"35-39"</span>,<span class="st">"40-44"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"45-49"</span>,<span class="st">"50-54"</span>,<span class="st">"55-59"</span>,<span class="st">"60-64"</span>,<span class="st">"65-69"</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"70-74"</span>,<span class="st">"75-79"</span>,<span class="st">"80+"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Diabetes, HighChol, BMI, Age)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(diabetes_eda)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   253680 obs. of  4 variables:
+ $ Diabetes: Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 2 1 ...
+ $ HighChol: Factor w/ 2 levels "No High Cholesterol",..: 2 1 2 1 2 2 1 2 2 1 ...
+ $ BMI     : num  40 25 28 27 24 25 30 25 30 24 ...
+ $ Age     : Factor w/ 13 levels "18-24","25-29",..: 9 7 9 11 11 10 9 11 9 8 ...</code></pre>
+</div>
+</div>
+<p>This is the data we will use for EDA.</p>
 
 
 </section>
