@@ -18,3 +18,4 @@ The first two were selected because of prior known relationships to them and dia
 
 Overall, the purpose of this EDA is to explore the chosen variables by summarizing them, looking at relationships, and evaluate different models to see their effectiveness in predicting prediabetes/diabetes or no diabetes. 
 
+## Data
