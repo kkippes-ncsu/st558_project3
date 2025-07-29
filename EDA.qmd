@@ -2,6 +2,7 @@
 title: "EDA"
 format: html
 editor: visual
+output-dir: docs
 ---
 
 ## Introduction
@@ -59,3 +60,104 @@ str(diabetes_eda)
 ```
 
 This is the data we will use for EDA.
+
+## Summarizations
+
+Now we will explore summary statistics in the form of tables and plots for our chosen variables. We will look at each variable independently (univariate), and then we will look at each relationship between the explanatory variable and the response (bivariate).
+
+### Diabetes
+
+First we will look at our response variable, diabetes, by itself. Below we find the proportion of the data has prediabetes/diabetes and the proportion that doesn't.
+
+```{r}
+diabetes_eda |>
+  count(Diabetes) |>
+  mutate(prop = n / sum(n))
+```
+
+It is interesting to see that 86% of the survey responses indicated that they don't have diabetes/prediabetes. This is a large imbalance and something that will have to be taken into consideration when selecting the most appropriate model.
+
+### Cholesterol
+
+Next we will look at cholesterol by itself and also it's relationship with diabetes.
+
+```{r}
+## univariate
+diabetes_eda |>
+  count(HighChol) |>
+  mutate(prop = n / sum(n))
+
+## bivariate
+diabetes_eda |> 
+  ggplot(aes(x = HighChol, fill = Diabetes)) +
+  geom_bar(position = "fill") +
+  labs(title = "Diabetes Proportion by High/Not High Cholesterol", y = "Proportion", fill = "Diabetes") +
+  theme_minimal()
+```
+
+Looking at cholesterol by itself shows that the survey responses are more evenly split with slightly more of the responses not having high cholesterol. However, when you breakdown cholesterol by diabetes status, we again see that there is a disproportion. Regardless of high cholesterol or not, more subjects do not have diabetes. Although, it is important to note that there is a higher proportion of diabetes when the subject also has high cholesterol.
+
+### BMI
+
+The below summarizes BMI. The first table and graph summarize BMI by itself. We can see that BMI ranges from 12 to 98 and the mean BMI is just above 28. Additionally, the BMI is right-shewed meaning that most data points fall to the left and that the mean is higher than the median.
+
+The second table and plot look at the relationship between BMI and Diabetes. They both tell us that subjects with diabetes tend to have a higher BMI but they have the same range of BMIs. Also, grouping BMI by diabetes makes the distributions of BMI more normal than BMI by itself. 
+
+```{r}
+## Univariate
+## summary table
+summary(diabetes_eda$BMI)
+
+## histogram
+ggplot(diabetes_eda, aes(x = BMI)) +
+  geom_histogram(binwidth = 1, fill = "darkgreen", color = "white") +
+  labs(title = "Distribution of BMI", x = "BMI", y = "Count") +
+  theme_minimal()
+
+## bivariate
+diabetes_eda |>
+  group_by(Diabetes) |>
+  summarise(
+    Mean_BMI = mean(BMI, na.rm = TRUE),
+    Median_BMI = median(BMI, na.rm = TRUE),
+    SD_BMI = sd(BMI, na.rm = TRUE),
+    Min_BMI = min(BMI),
+    Max_BMI = max(BMI)
+  )
+
+ggplot(diabetes_eda, aes(x = BMI, fill = Diabetes)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "BMI Density by Diabetes Status", x = "BMI", y = "Density") +
+  scale_fill_manual(values = c("No" = "navy", "Yes" = "pink")) +
+  theme_minimal()
+
+
+
+```
+
+### Age
+
+As a reminder, age is a 13-level age category where 1 = 18-24 all the way up to 13 = 80 and older and in between each level is in five year increments.Summary statistics shows that there are more reponses in the higher age groups (50 and older) and the lowest number of responses came from the 18-24 age group.
+
+```{r}
+## univariate
+diabetes_eda |>
+  count(Age) |>
+  mutate(prop = n / sum(n))
+
+## bivariate
+diabetes_eda |> 
+  ggplot(aes(x = Age, fill = Diabetes)) +
+  geom_bar(position = "fill") +
+  labs(title = "Diabetes Proportion by Age Group", y = "Proportion", fill = "Diabetes") +
+  scale_fill_manual(values = c("No" = "coral", "Yes" = "turquoise"))+
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+The bar plot shows the proportion of subjects with and without diabetes for all of the age groups. We observe that younger age groups have very low proportions of diabetes. As age increases, the proportion of those with diabetes also increases. 70-74 has the highest proportion of individuals with diabetes. 
+
+## Conclusion
+
+After looking at these three variables, we do see some relationships between diabetes and our three explanatory variables. We will next explore some predict models in the next modeling steps.
+
+[Click here for the Modeling Page](Modeling.html)
