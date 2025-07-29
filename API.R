@@ -122,13 +122,13 @@ function(Age = "60-64",
 # Example API calls:
 # Might need to replace the localhost with relevant address
 # 1. Predict with default values
-# curl "http://127.0.0.1:31945/predict_diabetes"
+# curl "http://127.0.0.1:8000/predict_diabetes"
 
 # 2. Predict with full input — common values
-# curl "http://127.0.0.1:31945/predict_diabetes?Age=18-24&BMI=50&HighChol=No_High_Cholesterol&General_Health=Very_Good"
+# curl "http://127.0.0.1:8000/predict_diabetes?Age=50-54&BMI=50&HighChol=High_Cholesterol&General_Health=Fair"
 
 # 3. Predict with a younger age and lower income
-# curl "http://127.0.0.1:31945/predict_diabetes?Age=70-74&BMI=20&HighChol=High_Cholesterol&General_Health=Fair"
+# curl "http://127.0.0.1:8000/predict_diabetes?Age=70-74&BMI=20&HighChol=No_High_Cholesterol&General_Health=Very_Good"
 
 #* @get /info
 #* @json
