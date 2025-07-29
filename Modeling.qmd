@@ -185,9 +185,9 @@ For classification, the final prediction is performed via a majority vote of all
 
 ```{r warning=FALSE, message=FALSE}
 ## define recipe
-RF_rec <- recipe(Diabetes ~ BMI + Age, data = train) |>
+RF_rec <- recipe(Diabetes ~ BMI + Age + HighChol + General_Health, data = train) |>
   step_normalize(BMI) |>
-  step_dummy(Age)
+  step_dummy(Age, HighChol, General_Health)
 
 ## set model spec
 rf_spec <- rand_forest(mtry = tune(), trees = 100) |>
@@ -224,4 +224,4 @@ rf_final_fit |> collect_metrics()
 
 ## Final Model Selection
 
-Based on the three best models from above we found that out of those 3, 
+Based on the three best models from above we found that out of those 3, random forest gave us the best model on the test data.
