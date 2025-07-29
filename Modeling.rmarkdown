@@ -1,10 +1,11 @@
 ---
 title: "Modeling"
-author: Kayla Kippes
 format: html
 editor: visual
 output-dir: docs
 ---
+
+
 
 ## Introduction
 
@@ -15,6 +16,8 @@ In this analysis, we will be using log loss as our metric to evaluate the best m
 First we will split the data into training and test sets to use for modeling. By doing this, it will help with over fitting as our goal is for the model to predict well on unseen data. We will use logistic regression, classification trees, and random forest models.
 
 ## Data
+
+
 
 ```{r warning=FALSE, message=FALSE}
 ## load the necessary packages
@@ -77,7 +80,11 @@ diabetes_modeling <- diabetes_data |>
          Heavy_Alcohol_Consumption, General_Health, Sex, Age, Income)
 ```
 
+
+
 Now that we have selected the data for the models, we are going to split it into the train and test sets.
+
+
 
 ```{r warning=FALSE, message=FALSE}
 ## set seed
@@ -89,7 +96,11 @@ train <- training(diabetes_split)
 test <- testing(diabetes_split)
 ```
 
+
+
 We also need to establish our 5 fold cross-validation.
+
+
 
 ```{r warning=FALSE, message=FALSE}
 tr_ctrl <- trainControl(
@@ -100,11 +111,15 @@ tr_ctrl <- trainControl(
 )
 ```
 
+
+
 Now let's create our models.
 
 ### Logistic Regression
 
 Logistic regression is a generalized linear modeling technique used to predict the probability of a binary outcome and it cane be used for when the outcome is categorical. It uses a logit function to model the relationship between predictors and the log-odds of an event occurring. We are using it for this data because our response variable, diabetes, is a binary classification which is what these types of models are designed for. Below we will look at 3 different LR models and choose our best one.
+
+
 
 ```{r warning=FALSE, message=FALSE}
 ## LR model 1
@@ -147,11 +162,15 @@ LogLoss_Results <- rbind(
 LogLoss_Results
 ```
 
+
+
 Based off of our results, we can conclude that the model with the lowest log loss is our best model so in this case it will be Model 1 which used all of the preselected predictors.
 
 ### Classification Trees
 
 Tree based methods attempt to split up predictor space into regions. Within each region, a different prediction can be made. Classification trees are used if the goal is to classify (predict) group membership. Usually the most prevalent class in the region is used as the prediction. In this case, predicting diabetes from the various explanatory variables may involve complex interactions so using a classification tree will help capture those. Decision trees help filter for the important model features and  are easy to interpret.
+
+
 
 ```{r warning=FALSE, message=FALSE}
 ## create recipe
@@ -175,6 +194,8 @@ tree_model <- train(
 # Check best
 tree_model$results |> arrange(logLoss)
 ```
+
+
 Our best model had a complexity parameter of 0.001 with a log loss of 0.3576.
 
 ### Random Forest
@@ -183,6 +204,8 @@ Random Forest is an ensemble method that builds multiple decision trees during t
 
 For classification, the final prediction is performed via a majority vote of all the ensemble trees. Random forests tend to give better accuracy than a single classification tree.
 
+
+
 ```{r warning=FALSE, message=FALSE}
 ## define recipe
 RF_rec <- recipe(Diabetes ~ BMI + Age, data = train) |>
@@ -190,7 +213,7 @@ RF_rec <- recipe(Diabetes ~ BMI + Age, data = train) |>
   step_dummy(Age)
 
 ## set model spec
-rf_spec <- rand_forest(mtry = tune(), trees = 100) |>
+rf_spec <- rand_forest(mtry = tune()) |>
  set_engine("ranger") |>
  set_mode("classification")
 
@@ -222,6 +245,8 @@ rf_final_fit <- rf_final_wkf |>
 rf_final_fit |> collect_metrics()
 ```
 
+
+
 ## Final Model Selection
 
-Based on the three best models from above we found that out of those 3, 
+

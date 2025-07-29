@@ -1,5 +1,6 @@
 ---
 title: "EDA"
+author: Kayla Kippes
 format: html
 editor: visual
 output-dir: docs
